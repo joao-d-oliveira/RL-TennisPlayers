@@ -113,7 +113,7 @@ Besides that, at each step there's also a [Noise element](https://github.com/joa
 
 ### Model NeuralNetwork
 
-The NeuralNetwork for both Actor and Critic (defined at [model_reacher.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ddpg.py)) 
+The NeuralNetwork for both Actor and Critic (defined at [model_tennis_ddpg.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ddpg.py)) 
 are composed by 3 initial Linear Layers. (made them flexbile to receive the hidden sizes via parameter) <br>
 The 1st and last Layer are the same for both Actor and Critic:
 ```
@@ -234,11 +234,12 @@ From the vast number of ideas, or options that one can do to improve the perform
 will try to least some of them to give some food-for-tought.
 
 Some ideas for the future:
-— Other algorithms could be tested as well, such as [A3C](https://arxiv.org/pdf/1602.01783.pdf), and [D4PG](https://openreview.net/pdf?id=SyZipzbCb), MADDPG
-— Another possibility would be to spend more time finding the right HyperParameters
-— I really liked the performance and difference which PER makes in DDPG, I would like to try
+
+* Other algorithms could be tested as well, such as [A3C](https://arxiv.org/pdf/1602.01783.pdf), and [D4PG](https://openreview.net/pdf?id=SyZipzbCb), MADDPG
+* Another possibility would be to spend more time finding the right HyperParameters
+* I really liked the performance and difference which PER makes in DDPG, I would like to try
 with more time to try to add that advantage to the PPO algorithm;
-— I did compare the overall time to reach the target, but unfortunately I didn't 
+* I did compare the overall time to reach the target, but unfortunately I didn't 
 have a more timely measure episode by episode, this would be important to compare 
 algorithms which have such a different number of episodes to train which (PPO vs DDPG vs MADDPG).
 In the end what matters should be the evolution of the agents score over time, 
