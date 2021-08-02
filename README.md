@@ -10,8 +10,8 @@
 This project aims to explore the power of teaching an agent 
 through Reinforced Learning (RL) to learn how to play Tennis.  
 
-**TODO: CHANGE**: For this we are using a Deep Deterministic Policy Gradients (DDPG) algorithm 
-to learn how to control efficiently the arm.
+In order to teach, we explored the options of teaching the agent through a Deep Deterministic Policy Gradients (DDPG) algorithm 
+with Prioritized Experience Replay (PER), as well as with an Proximal Policy Optimization (PPO), to learn how to control efficiently the arm.
 
 We are working with the  [Tennis](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#tennis) environment.
 
@@ -31,24 +31,14 @@ ball and racket.
 Each agent receives its own, local observation.  
 Two continuous actions are available, corresponding to movement toward (or away from) the net, and jumping. 
 
-So for example, in the case of Multi Agent version (2º version):
-
------
-**TODO CHANGE:**
+So for example:
 
 ```
-There are 20 agents. Each observes a state with length: 33
-The state for the first agent looks like: [ 0.00000000e+00 -4.00000000e+00  0.00000000e+00  1.00000000e+00
- -0.00000000e+00 -0.00000000e+00 -4.37113883e-08  0.00000000e+00
-  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
-  0.00000000e+00  0.00000000e+00 -1.00000000e+01  0.00000000e+00
-  1.00000000e+00 -0.00000000e+00 -0.00000000e+00 -4.37113883e-08
-  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
-  0.00000000e+00  0.00000000e+00  5.75471878e+00 -1.00000000e+00
-  5.55726624e+00  0.00000000e+00  1.00000000e+00  0.00000000e+00
- -1.68164849e-01]
+The state for the first agent looks like: [ 0.          0.          0.          0.          0.          0.
+  0.          0.          0.          0.          0.          0.
+  0.          0.          0.          0.         -6.65278625 -1.5
+ -0.          0.          6.83172083  6.         -0.          0.        ]
 ```
------
 
 ### Conditions to consider solved
 
@@ -62,19 +52,12 @@ The environment is considered solved, when the average (over 100 episodes) of th
 
 ## Distributed Training
 
------
-**TODO CHANGE:**
-For this project, we can either use:
-- The first version of the environment with a single agent.
-- The second version contains 20 identical agents, each with its own copy of the environment.  
-
-For this we used the DDPG algorithm for both the 1st and 2nd version, so with 1 or 20 agents, and noticed that with the Multi version the results are much faster
+As mentioned above, we used the DDPG algorithm with and without PER,
+ and noticed that PER makes a considerable difference.
 (see [Report.md](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md) for further info)
 
-With the optional challenge [Crawler](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#crawler), 
-we see that DDPG is not enough (or too slow) to converge, so for this I tried to search for another algorithm such 
-as [PPO](https://arxiv.org/pdf/1707.06347.pdf).
------
+To test the other options of algorithm, we tested the [PPO](https://arxiv.org/pdf/1707.06347.pdf)
+algorithm which also delivers good results, however needs more episodes.
 
 ## Instructions
 
@@ -105,98 +88,52 @@ As this is an old version, the best is to download the
     (_For AWS_) If you'd like to train the agent on AWS (and have not [enabled a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md)), then please use [this link](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Tennis/Tennis_Linux_NoVis.zip) to obtain the "headless" version of the environment.  You will **not** be able to watch the agent without enabling a virtual screen, but you will be able to train the agent.  (_To watch the agent, you should follow the instructions to [enable a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md), and then download the environment for the **Linux** operating system above._)
 3. Place the downloaded file for your environment in the DRLND GitHub repository, in the ``RL-TennisPlayer`` folder, and unzip (or decompress) the file.
 
-#### For Soccer Environment
-
-![Soccer][image2]
-
-In this environment, the goal is to train a team of agents to play soccer.  
-
-You can read more about this environment in the ML-Agents GitHub [here](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#soccer-twos).  To solve this harder task, you'll need to download a new Unity environment.  (**Note**: Udacity students should not submit a project with this new environment.)
-You need only select the environment that matches your operating system:
-- Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Soccer/Soccer_Linux.zip)
-- Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Soccer/Soccer.app.zip)
-- Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Soccer/Soccer_Windows_x86.zip)
-- Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Soccer/Soccer_Windows_x86_64.zip)
-
-Then, place the file in the `RL-TennisPlayer/` folder in the DRLND GitHub repository, and unzip (or decompress) the file.  Next, open `Soccer.ipynb` and follow the instructions to learn how to use the Python API to control the agent.
-
-(_For AWS_) If you'd like to train the agents on AWS (and have not [enabled a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md)), then please use [this link](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P3/Soccer/Soccer_Linux_NoVis.zip) to obtain the "headless" version of the environment.  You will **not** be able to watch the agents without enabling a virtual screen, but you will be able to train the agents.  (_To watch the agents, you should follow the instructions to [enable a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md), and then download the environment for the **Linux** operating system above._)
-
-
 ### Action Space
 
------
-**TODO CHANGE:**
-Each action is a vector with four numbers, corresponding to torque applicable to two joints. Every entry in the action vector should be a number between -1 and 1.
------
+Two continuous actions are available, corresponding to movement toward 
+(or away from) the net, and jumping.
 
 ### Files
 
------
-**TODO CHANGE:**
-
 #### Code
-1. [utils/agent_reacher_ddpg.py](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/utils/agent_reacher_ddpg.py) - Agent class containing methods to help the agent learn and acquire knowledge using DDPG algorithm
-1. [utils/model_reacher.py](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/utils/model_reacher.py) - DDQG model of Actor and Critic class setup 
-1. [Continuous_Control.ipynb](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/Continuous_Control.ipynb) - Jupyter Notebook for running experiment, for Reacher Control
----
-1. [utils/agent_crawler_ppo.py](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/utils/agent_crawler_ppo.py) - Agent class containing methods to help the agent learn and acquire knowledge using PPO algorithm for Crawler environment
-1. [utils/model_crawler.py](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/utils/model_crawler.py) - PPO model of Actor and Critic class setup 
-1. [Crawler.ipynb](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/Crawler.ipynb) - Jupyter Notebook for running experiment, for Crawler Control
+1. [utils/agent_tennis_ddpg.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/agent_tennis_ddpg.py) - Agent class containing methods to help the agent learn and acquire knowledge using DDPG algorithm
+2. [utils/model_tennis_ddpg.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ddpg.py) - DDQG model of Actor and Critic class setup 
+3. [utils/agent_tennis_ppo.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/agent_tennis_ppo.py) - Agent class containing methods to help the agent learn and acquire knowledge using PPO algorithm
+4. [utils/model_tennis_ppo.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ppo.py) - PPO model of Actor and Critic class setup 
+5. [Tennis.ipynb](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Tennis.ipynb) - Jupyter Notebook for running experiment, for Tennis Players
 
 #### Documentation
-1. [README.md](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/README.md) - This file
-1. [Report.md](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/Report.md) - Detailed Report on the project
+1. [README.md](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/README.md) - This file
+1. [Report.md](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md) - Detailed Report on the project
 
 #### Models
-All models are saved on the subfolder ([saved_models](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/saved_models)).
-For example, [checkpoint_Mult_actor.pth](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/saved_models/checkpoint_Mult_actor.pth) 
-and [checkpoint_Mult_critic.pth](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/saved_models/checkpoint_Mult_critic.pth) are 
+All models are saved on the subfolder ([saved_models](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/saved_models)).
+For example, [checkpoint_actor_ddpg_True-PER_1.pth](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/saved_models/checkpoint_actor_ddpg_True-PER_1.pth) 
+and [checkpoint_critic_ddpg_True-PER_1.pth](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/saved_models/checkpoint_critic_ddpg_True-PER_1.pth) are 
 files which has been saved upon success of achieving the goal, and
-[finished_Reacher_Mult_actor.pth](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/saved_models/finished_Reacher_Mult_actor.pth) 
-and [finished_Reacher_Mult_critic.pth](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/saved_models/finished_Reacher_Mult_critic.pth) 
+[finished_actor_ddpg_False-PER_1.pth](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/saved_models/finished_actor_ddpg_False-PER_1.pth) 
+and [finished_critic_ddpg_False-PER_1.pth](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/saved_models/finished_critic_ddpg_False-PER_1.pth) 
 are the end model after runing all episodes.
------
 
 ### Running Tennis training
 
------
-**TODO CHANGE:**
 
 #### Structure of Notebook
 
 The structure of the notebook follows the following:
-> 1. Initial Setup: _(setup for parameters of experience, check [report](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/Report.md) for more details)_ <br>
-> 2. Continuous Control <br>
-> 2.1 Start the Environment: _(load environment for the game)_<br>
-> 2.2 Helper Functions: _(functions to help the experience, such as Optuna, DDPG, ...)_<br>
-> 2.3 Baseline: _(section to train an agent with the standard parameters, without searching for hyper-parameters)_<br>
-> 2.4 HyperParameters: _(section to train an agent with hyperparameters)_<br>
-> 3.0 Plot all results: _(section where all the results from above sections are plotted to compare performance)_
-
-At Initial Setup, you can define whether you want 
-One or Multiple agents by turning at `SETUP` dictionary:
-- `'MULTI_ONE': 'One',  # 'Mult' or 'One'` 
+> 1. Collaboration and Competition <br>
+> 1.1 Start the Environment: _(load environment for the game)_<br>
+> 1.2 DDPG _(section to train agent with DDPG algorithm, with or without PER)_<br>
+> 1.3 PPO: _(section to train agent with PPO algorithm)_<br>
+> 2.0 Plot all results: _(section where all the results from above sections are plotted to compare performance)_
 
 #### Running
 
-After fulling the requirements on section [Getting Started](https://github.com/joao-d-oliveira/RL-RobotArm#getting-started) 
-0. Load Jupyter notebook [Continuous_Control.ipynb](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/Continuous_Control.ipynb)
-1. Adapt dictionary `SETUP = {` with the desired paramenters
-2. Load the environment. Running sections: 
+After fulling the requirements on section [Getting Started](https://github.com/joao-d-oliveira/RL-TennisPlayers#getting-started) 
+0. Load Jupyter notebook [Tennis.ipynb](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Tennis.ipynb)
+1. Load the environment. Running sections: 
    > 1 Initial Setup <br>
    > 2.1 Start the Environment <br>
    > 2.2. Helper Functions
-
------
-
-### Running Soccer Environment
-
------
-**TODO CHANGE:**
-
-After fulling the requirements on section [Getting Started](https://github.com/joao-d-oliveira/RL-RobotArm#getting-started) 
-0. Load Jupyter notebook [Crawler.ipynb](https://github.com/joao-d-oliveira/RL-RobotArm/blob/master/Crawler.ipynb)
-1. Run all cells, no special options needed
-
+2. Choose which algorithm you want to train your agent with, PPO or DDPG
 -----
