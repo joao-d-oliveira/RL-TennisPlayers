@@ -164,18 +164,20 @@ def forward(self, state):
 
 ### Model Architecture PPO
 
-The PPO model architecture is implemented at [model_tennis_ppo.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ppo.py))
+The PPO model architecture is implemented at [model_tennis_ppo.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ppo.py)
 which differs from DDPG where instead of seperate Classes for Actor and Critic,
 we use a class for the [ActorCritic](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ppo.py#L27).
 
-I didn't change the network architecture, and went for the established to test it out.
-Which seems to work, nevertheless, as I mention at [Ideas for the future](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#ideas-for-the-future),
-it would be very interesting to play with sizes of hidden layers and number of layers,
-as well as different activations (as I will show bellow, here we are using Tahn as primary
+I didn't change the network architecture, and went for the established to test it out. Which seems to work well.
+
+Nevertheless, as I mention at [Ideas for the future](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#ideas-for-the-future),
+it would be very interesting to:
+* play with sizes of hidden layers and number of layers,
+* as well as different activations (as I will show bellow, here we are using Tahn as primary
 activation, instead of ReLu, which come with its challenges).
 
 Given that the problem/game at hand (Tennis) has a continuous action space,
-then the Arquitecture is defined by a sequential model actor:
+ the Arquitecture is defined by a sequential model actor:
 ```
 self.actor = nn.Sequential(
                 nn.Linear(state_dim, 64),
@@ -190,10 +192,10 @@ self.actor = nn.Sequential(
 which means 3 Linear layers (like the [DDPG Architecture](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#model-architecture-ddpg))
 and the 2 hidden layers both of size 64.
 
-Instead of Rectified Linear Unit (ReLU) activation function in the hidden layer seen in  [DDPG Architecture](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#model-architecture-ddpg))
-it uses a Tanh activation function between the layers.
+Instead of Rectified Linear Unit (ReLU) activation function in the hidden layer seen in  [DDPG Architecture](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#model-architecture-ddpg)
+it uses a Tanh activation function between the layers. <br>
 That might have an advantage, given that we are indeed using action which is spread between (-1, 1),
-instead of (0, 1) like ReLu.
+instead of (0, 1) like ReLu.<br>
 However it comes also with drawbacks, for example, the lenght of the training, given that we are increasing our universe
 of numbers, we are getting a bigger sparsity.
 
@@ -213,6 +215,8 @@ self.critic = nn.Sequential(
 
 Like the actor architecture, it was choosen to use Tanh activation instead of the ReLu
 in between the hidden layers.
+
+#### Network update
 
 The Policy of the Actor - Critic combination, gets updated every **xxx** ammount of timesteps
 defined at the `train_ppo()` method in [Tennis.ipynb](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Tennis.ipynb) by the
