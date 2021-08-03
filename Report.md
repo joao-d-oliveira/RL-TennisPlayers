@@ -111,11 +111,17 @@ Out of which, important to mention **memory** which is an object of [ReplayBuffe
 as well as **self.actor_local** and **self.critic_local** which is an object of [Actor and Critic](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ddpg.py).
 Besides that, at each step there's also a [Noise element](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/agent_tennis_ddpg.py#L285) added to help the agent.
 
-### Model NeuralNetwork
+### Model Architecture DDPG
+
+Used the same hidden sizes as the previous project.
+Which means:
+* **fc1_units:** 400
+* **fc2_units:** 300
 
 The NeuralNetwork for both Actor and Critic (defined at [model_tennis_ddpg.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ddpg.py)) 
 are composed by 3 initial Linear Layers. (made them flexbile to receive the hidden sizes via parameter) <br>
 The 1st and last Layer are the same for both Actor and Critic:
+
 ```
 self.fc1 = nn.Linear(state_size, fc1_units)
 (...)
@@ -123,22 +129,100 @@ self.fc3 = nn.Linear(fc2_units, action_size)
 ```
 
 But the 2nd Linear Layer differs size, given that the Critic needs to **"critize"**
-the choices made by the Actor. For that, the critic has embeded the actions in its hidden unit.
+the choices made by the Actor. For that, the critic has embedded the actions in its hidden unit.
 
 ```
 Actor: self.fc2 = nn.Linear(fc1_units, fc2_units)
 Critic: self.fc2 = nn.Linear(fc1_units+action_size, fc2_units)
 ```
-This will obviously mean that the forward method is also different:
+This will obviously mean that the forward method is also different, 
+where in the case for the critic, the forward method gets the current state, and 
+the actor's calculated actions, which are appended to the hidden layer. 
+
+That results in the following Critic Forward:
 
 ```
-"""Build a critic (value) network that maps (state, action) pairs -> Q-values."""
-xs = F.relu(self.fcs1(state))
-x = torch.cat((xs, action), dim=1)
-x = F.relu(self.fc2(x))
+def forward(self, state, action):
+    state = state.to(device)
+    action = action.to(device)
+    """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
+    xs = F.relu(self.fcs1(state))
+    x = torch.cat((xs, action), dim=1)
+    x = F.relu(self.fc2(x))
+    return self.fc3(x)
 ```
 
-### ReplayBuffer 
+Which differs from a more simple approach for the Actor Forward:
+
+```
+def forward(self, state):
+    """Build an actor (policy) network that maps states -> actions."""
+    x = F.relu(self.fc1(state))
+    x = F.relu(self.fc2(x))
+    return torch.tanh(self.fc3(x))
+```
+
+### Model Architecture PPO
+
+The PPO model architecture is implemented at [model_tennis_ppo.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ppo.py))
+which differs from DDPG where instead of seperate Classes for Actor and Critic,
+we use a class for the [ActorCritic](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/model_tennis_ppo.py#L27).
+
+I didn't change the network architecture, and went for the established to test it out.
+Which seems to work, nevertheless, as I mention at [Ideas for the future](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#ideas-for-the-future),
+it would be very interesting to play with sizes of hidden layers and number of layers,
+as well as different activations (as I will show bellow, here we are using Tahn as primary
+activation, instead of ReLu, which come with its challenges).
+
+Given that the problem/game at hand (Tennis) has a continuous action space,
+then the Arquitecture is defined by a sequential model actor:
+```
+self.actor = nn.Sequential(
+                nn.Linear(state_dim, 64),
+                nn.Tanh(),
+                nn.Linear(64, 64),
+                nn.Tanh(),
+                nn.Linear(64, action_dim),
+                nn.Tanh()
+            )
+```
+
+which means 3 Linear layers (like the [DDPG Architecture](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#model-architecture-ddpg))
+and the 2 hidden layers both of size 64.
+
+Instead of Rectified Linear Unit (ReLU) activation function in the hidden layer seen in  [DDPG Architecture](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#model-architecture-ddpg))
+it uses a Tanh activation function between the layers.
+That might have an advantage, given that we are indeed using action which is spread between (-1, 1),
+instead of (0, 1) like ReLu.
+However it comes also with drawbacks, for example, the lenght of the training, given that we are increasing our universe
+of numbers, we are getting a bigger sparsity.
+
+For the critic, we also have a sequential model, defined as well by 3 layers,
+which at the end, outputs an evaluation metric
+like a "reward" on whether the action choosen by the actor was good or bad.
+
+```
+self.critic = nn.Sequential(
+    nn.Linear(state_dim, 64),
+    nn.Tanh(),
+    nn.Linear(64, 64),
+    nn.Tanh(),
+    nn.Linear(64, 1)
+    )
+```
+
+Like the actor architecture, it was choosen to use Tanh activation instead of the ReLu
+in between the hidden layers.
+
+The Policy of the Actor - Critic combination, gets updated every **xxx** ammount of timesteps
+defined at the `train_ppo()` method in [Tennis.ipynb](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Tennis.ipynb) by the
+variable `update_timestep`.<br>
+The update is defined by the method [update() at utils/agent_tennis_ppo.py](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/utils/agent_tennis_ppo.py#L93)
+And there we do an evaluation of the policies given the rewards, actions, and the log probabilities
+iterating **xxx** times over the policy.
+
+
+### ReplayBuffer (used in DDPG) 
 
 Buffer used to store experiences which the Agent can learn from.<br>
 The Buffer is initialized with the option to have **Prioritized Experience Replay** of not and adjusted the methods accordingly.
@@ -161,9 +245,9 @@ This function is only called in the case of PER (Prioritized Experience Replay) 
 ### Hyper-Parameters
 The project has some parameters which we can tweak to improve the performance. <br>
 I didn't use the Optuna for tweaking the hyperparameters due to time constraints, but 
-as sugested in the [Ideas for the future](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#ideas-for-the-future)
+as suggested in the [Ideas for the future](https://github.com/joao-d-oliveira/RL-TennisPlayers/blob/master/Report.md#ideas-for-the-future)
 
-#### DDPG Algorithm
+#### DDPG Algorithm HyperParameters
 
 For the DDPG Algorithm, one can have tweak following hyper-parameters:
 
@@ -176,16 +260,16 @@ For the DDPG Algorithm, one can have tweak following hyper-parameters:
 * `'NOISE_SIGMA_MIN'` # lower limit of EPS (used for greedy approach)
 * `'NOISE_SIGMA_DECAY'` # value for which EPS (used for greedy approach) is multiplied accordingly to decrease until reaching the lower limit
 
-#### PPO Algorithm
+#### PPO Algorithm HyperParameters
 
 * `'gamma'` # discount value used to discount each experiences
 * `'tau'` # value for interpolation
 * `'lr_actor'` # learning rate used for optimizer of gradient-descend
 * `'lr_critic'` # learning rate used for optimizer of gradient-descend
-* `action_std` # Starting Standard value for action distribution (Multivariate Normal)
-* `action_std_decay_rate` # linearly decay rate for action distribution
-* `min_action_std` # minimum value which action distribution can reach
-* `eps_clip` # Clip parameter for PPO
+* `'action_std'` # Starting Standard value for action distribution (Multivariate Normal)
+* `'action_std_decay_rate'` # linearly decay rate for action distribution
+* `'min_action_std'` # minimum value which action distribution can reach
+* `'eps_clip'` # Clip parameter for PPO
 
 *Note:* There are other parameters and dimensions that could be explored, but I thougth these could be the most relevant.  
 
