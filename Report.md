@@ -320,14 +320,15 @@ will try to least some of them to give some food-for-tought.
 Some ideas for the future:
 
 * Other algorithms could be tested as well, such as [A3C](https://arxiv.org/pdf/1602.01783.pdf), and [D4PG](https://openreview.net/pdf?id=SyZipzbCb), MADDPG
-* Another possibility would be to spend more time finding the right HyperParameters
+* Another possibility would be to spend more time finding the right HyperParameters;
 * I really liked the performance and difference which PER makes in DDPG, I would like to try
 with more time to try to add that advantage to the PPO algorithm;
+* Another thing that one could try is to check other more complex (or less) models for the Actor and Critic, with fewer, or more layers, different activation functions, ...
 * I did compare the overall time to reach the target, but unfortunately I didn't 
 have a more timely measure episode by episode, this would be important to compare 
 algorithms which have such a different number of episodes to train which (PPO vs DDPG vs MADDPG).
 In the end what matters should be the evolution of the agents score over time, 
-instead of over episodes
+instead of over episodes;
 
 ------
 
